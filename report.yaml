@@ -1,0 +1,6 @@
+---
+- name: Ensure Agent is running
+  hosts: all
+  
+  roles:
+    - defender-report
