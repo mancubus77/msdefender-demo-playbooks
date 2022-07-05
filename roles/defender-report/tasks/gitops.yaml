@@ -11,6 +11,7 @@
 
 
 - name: Checkout repo
+  no_log: true
   vars:
     ts: "{{ ansible_date_time.iso8601_basic_short }}"
   shell: "{{ item }}"
