@@ -29,3 +29,7 @@
     - git add report.md
     - git commit -a -m "Ansible| add new report from {{ ts }}"
     - git push --set-upstream origin {{ ts }}
+
+- name: Successful message
+  debug:
+    msg: "Report was uploaded to https://github.com/mancubus77/msdefender-report-demo"
