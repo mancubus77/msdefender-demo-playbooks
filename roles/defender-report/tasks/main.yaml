@@ -1,0 +1,52 @@
+---
+- name: Init Report
+  vars:
+    token: !vault |
+              $ANSIBLE_VAULT;1.1;AES256
+              66346161303965626338656465313930396364643432353433313038383837343566336231616466
+              3465376438353439373536646433363034353335323265380a393964366539333963306563376337
+              32383733363866363161343937616136643962326565333431356633623035313430393764383438
+              3365333530613436360a373031313930376262653761373165336361623635363137653838643732
+              66626230333761396632646139363239316539663566643962316539643038633664613335336432
+              3337376661666134393361396639633164323162313564316563
+  delegate_to: localhost
+  set_fact:
+    bad_hosts: []
+    acm_git: https://github.com/mancubus77/msdefender-report-demo.git
+    giturl: "https://{{token}}@"
+  run_once: true
+
+- name: Check Agent Status
+  ansible.builtin.systemd:
+      name: mdatp
+      # state: started
+  register: mdatp_status
+
+- debug:
+    var: mdatp_status.status.ActiveState
+  tags: [ 'never', 'debug' ]
+
+- name: Add host to report
+  delegate_to: localhost
+  set_fact:
+    bad_hosts: "{{ bad_hosts  + [ inventory_hostname ] }}"
+  when: 
+    -  mdatp_status.status.ActiveState == "inactive"
+
+- debug:
+    var: bad_hosts
+  tags: [ 'never', 'debug' ]
+
+- name: Generate report 
+  vars:
+      ts: "{{ ansible_date_time.iso8601_basic_short }}"
+  delegate_to: localhost
+  run_once: true
+  template: 
+    src: report.j2
+    dest: /tmp/1.md
+
+- name: Include GitOps task
+  import_tasks: gitops.yaml
+  run_once: true
+  delegate_to: localhost

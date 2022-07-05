@@ -1,0 +1,30 @@
+- name: Ensure directory is empty
+  ansible.builtin.file:
+    path: "/tmp/defender_demo"
+    state: absent
+  ignore_errors: true
+
+- name: Create directory
+  ansible.builtin.file:
+    path: "/tmp/defender_demo"
+    state: directory
+
+
+- name: Checkout repo
+  vars:
+    ts: "{{ ansible_date_time.iso8601_basic_short }}"
+  shell: "{{ item }}"
+  args:
+    chdir: "/tmp/defender_demo"
+  with_items:
+    - git clone "{{ acm_git | regex_replace('(https:\/\/)', giturl) }}" .
+    - git fetch --all 
+    - git pull
+    - git branch {{ ts }}
+    - git checkout {{ ts }}
+    - git config user.name "ANSIBLE ROBO"
+    - git config user.email robo@redhat.com
+    - cp /tmp/1.md /tmp/defender_demo/report.md
+    - git add report.md
+    - git commit -a -m "Ansible| add new report from {{ ts }}"
+    - git push --set-upstream origin {{ ts }}

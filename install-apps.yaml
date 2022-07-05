@@ -1,0 +1,11 @@
+---
+- name: Install Applications
+  hosts: all
+  
+  roles:
+    - name: package-manager
+      vars: 
+        packages:
+          - java-11-openjdk-1:11.0.2.7-2.el8
+          #- java-11-openjdk-1:11.0.3.7-2.el8_0
+          #- java-11-openjdk-1:11.0.13.0.8-1.el8_4

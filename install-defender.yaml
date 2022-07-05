@@ -1,0 +1,11 @@
+---
+- name: Install Microsoft Defender Endpoint for Linux.
+  hosts: all:!platform_windows
+
+  vars:
+    onboarding_source: http://124.19.48.74/share/WindowsDefenderATPOnboardingPackage.zip
+
+  roles:
+    - deekayen.mde
+
+  

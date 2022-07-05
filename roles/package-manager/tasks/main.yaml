@@ -1,0 +1,7 @@
+- debug: var=packages
+
+- name: Install a list of packages
+  ansible.builtin.yum:
+    name: "{{ packages }}"
+    state: present
+    allow_downgrade: true

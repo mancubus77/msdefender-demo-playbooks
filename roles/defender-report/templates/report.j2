@@ -1,0 +1,5 @@
+| host| status | ts |
+| ------------- | :-----:| -----:
+{% for host in bad_hosts %}
+| {{ host }} | inactive | {{ ts }} |
+{% endfor%}
