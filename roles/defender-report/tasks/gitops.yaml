@@ -9,16 +9,23 @@
     path: "/tmp/defender_demo"
     state: directory
 
+- name: Checkout Repo
+  delegate_to: localhost
+  run_once: true
+  git: 
+    repo: "{{ giturl }}"
+    dest: "/tmp/defender_demo"
+    clone: true 
+    update: true
 
 - name: Checkout repo
-  no_log: true
+  # no_log: true
   vars:
     ts: "{{ ansible_date_time.iso8601_basic_short }}"
-  shell: "{{ item }}"
+  command: "{{ item }}"
   args:
     chdir: "/tmp/defender_demo"
   with_items:
-    - git clone "{{ acm_git | regex_replace('(https:\/\/)', giturl) }}" .
     - git fetch --all 
     - git pull
     - git branch {{ ts }}

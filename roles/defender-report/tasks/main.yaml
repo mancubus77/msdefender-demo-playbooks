@@ -12,8 +12,7 @@
   delegate_to: localhost
   set_fact:
     bad_hosts: []
-    acm_git: https://github.com/mancubus77/msdefender-report-demo.git
-    giturl: "https://{{token}}@"
+    giturl: https://{{token}}@github.com/mancubus77/msdefender-report-demo.git
   run_once: true
 
 - name: Check Agent Status
