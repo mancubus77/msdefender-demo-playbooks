@@ -1,6 +1,35 @@
 ---
-- name: Ensure Agent is running
+- name: Generate report of running agents
   hosts: all
-  
-  roles:
-    - defender-report
+  tasks:
+
+    - name: Check Agent Status
+      ansible.builtin.systemd:
+          name: mdatp
+          # state: started
+      register: mdatp_status
+
+    - debug:
+        var: mdatp_status.status.ActiveState
+      tags: [ 'never', 'debug' ]
+
+    - name: Set Service Status
+      set_fact:
+        svc_status: "{{ { inventory_hostname: mdatp_status.status.ActiveState} }}"
+
+    - debug:
+        var: hostvars['localhost']
+      tags: [ 'never', 'debug' ]
+
+    - name: Extract statuses and save them on localhost
+      set_fact:
+          status_report: "{{ play_hosts | map('extract', hostvars) | list | json_query(query) }}"
+      vars:
+        query: >-
+          [*].svc_status
+      run_once: true
+      delegate_to: localhost
+      delegate_facts: true
+
+    - ansible.builtin.include_role:
+        name: defender-report

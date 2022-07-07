@@ -11,35 +11,18 @@
               3337376661666134393361396639633164323162313564316563
   delegate_to: localhost
   set_fact:
-    bad_hosts: []
     giturl: https://{{token}}@github.com/mancubus77/msdefender-report-demo.git
   run_once: true
 
-- name: Check Agent Status
-  ansible.builtin.systemd:
-      name: mdatp
-      # state: started
-  register: mdatp_status
-
 - debug:
-    var: mdatp_status.status.ActiveState
-  tags: [ 'never', 'debug' ]
-
-- name: Add host to report
-  delegate_to: localhost
-  set_fact:
-    bad_hosts: "{{ bad_hosts  + [ inventory_hostname ] }}"
-  when: 
-    -  mdatp_status.status.ActiveState == "inactive"
-
-- debug:
-    var: bad_hosts
+    var: hostvars.localhost.bad_hosts
   tags: [ 'never', 'debug' ]
 
 - name: Generate report 
   vars:
       ts: "{{ ansible_date_time.iso8601_basic_short }}"
   delegate_to: localhost
+  delegate_facts: true
   run_once: true
   template: 
     src: report.j2

@@ -1,5 +1,7 @@
 | host| status | ts |
 | ------------- | :-----:| -----:
-{% for host in bad_hosts %}
-| {{ host }} | inactive | {{ ts }} |
-{% endfor%}
+{% for host in hostvars.localhost.status_report  %}
+{% for hostname,status in host.items() %}
+| {{ hostname }} | {{ status }} | {{ ts }} |
+{% endfor %}
+{% endfor %}
